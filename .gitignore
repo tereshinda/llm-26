@@ -1,1 +1,4 @@
 .DS_Store
+/results
+.venv/
+__pycache__/

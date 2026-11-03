@@ -1,0 +1,44 @@
+experiment:
+  repetitions: 3
+
+models:
+  gemma:
+    name: mlx-community/gemma-4-E4B-it-qat-4bit
+    base_url: http://localhost:8000/v1
+    max_tokens: 4048
+    chat_template_kwargs:
+      enable_thinking: false
+
+  qwen:
+    name: mlx-community/Qwen3.5-4B-OptiQ-4bit
+    base_url: http://localhost:8000/v1
+    chat_template_kwargs:
+      enable_thinking: false
+    max_tokens: 4048
+    
+  granite:
+    name: lmstudio-community/granite-4.2-8b-MLX-4bit
+    base_url: http://localhost:8000/v1
+    chat_template_kwargs:
+      enable_thinking: false
+    max_tokens: 4048
+    
+
+generation:
+  baseline: {}
+
+  tuned:
+    temperature: 0.2
+    top_p: 0.8
+
+  
+  temperature_high:
+    temperature: 0.8
+    top_p: 0.8
+
+  
+  top_p_high:
+    temperature: 0.2
+    top_p: 0.95
+
+

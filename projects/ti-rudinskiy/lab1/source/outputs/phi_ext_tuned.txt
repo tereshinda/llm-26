@@ -1,0 +1,13 @@
+```json
+
+{
+
+  "game_title": "The Long Dark",
+
+  "genre": "Survival",
+
+  "setting": "Icy wastelands left behind by a geomagnetic catastropher"
+
+}
+
+```
