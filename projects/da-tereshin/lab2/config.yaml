@@ -1,0 +1,67 @@
+# Этап 2 (Парсинг источников в md)
+conversion:
+  output_dir: data/converted
+  documents:
+    - path: "data/raw/Барт Р. Риторика образа.pdf"
+      ocr: false
+    - path: "data/raw/Carroll, Noel_Notes on the Sight Gag_from_Theorizing the Moving Image.pdf"
+      ocr: false
+    - path: "data/raw/Вертов МЫ Вариант манифеста.pdf"
+      ocr: true
+    - path: "data/raw/Малви Л. Визуальное удовольствие и нарративный кинематограф.pdf"
+      ocr: true
+    - path: "data/raw/Нерони Х. Наслаждение по Джейн Кэмпион.pdf"
+      ocr: false
+# Нормализация после md-конвертации
+cleaning:
+  input_dir: data/converted
+  output_dir: data/cleaned
+
+# Этап 3. Разбить на чанки и построить эмбеддинги
+# input_dir: data/converted
+input_dir: data/cleaned
+output_dir: artifacts/chunks
+splitter:
+  type: recursive
+  # [100 – 1 000]
+  chunk_size: 700
+  overlap: 100
+  include_headers: true
+  encoding: cl100k_base
+
+embedding:
+  type: dense
+  model: BAAI/bge-m3
+  revision: main
+  device: cpu
+  batch_size: 4
+  chunks_dir: artifacts/chunks/2026-11-05_21-37-09_193253
+  output_dir: artifacts/embeddings
+
+#  Этап 4. Развернуть векторное хранилище и загрузить индекс
+vector_store:
+  embeddings_dir: artifacts/embeddings/2026-11-05_21-39-38_297088
+  output_dir: artifacts/vector_store
+  type: hnsw  # flat | hnsw | hnsw_pq
+  M: 16 # связность графа
+  ef_construction: 100 # ширина поиска при построении графа
+  ef_search: 32 # ширина поиска при поиске по графу
+  pq_m: 32 # число подпространств
+  pq_nbits: 4 # число бит на подпространство
+
+# Этап 5. Этап 5. Метрики и оценка качества retrieval/QA
+evaluation:
+  questions: questions.json
+  output_dir: artifacts/evaluation
+  k: 10
+
+# Этап 6. Генерация ответа
+llm:
+  base_url: http://localhost:11434
+  model: qwen3.5:4b
+  timeout: 600
+  think: false
+  options:
+    temperature: 0
+    num_ctx: 16384 # окно контекста Ollama, включающее промпт и ответ
+    num_predict: 768
